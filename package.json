@@ -103,7 +103,7 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
-    "typescript": "^3.3.4000",
+    "typescript": "^3.6.3",
     "path": "^0.12.7"
   }
 }
