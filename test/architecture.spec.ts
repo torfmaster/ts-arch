@@ -21,19 +21,6 @@ describe("Project Architecture Rules", () => {
 		})
 	})
 
-	describe("complexity", () => {
-		it("complexity of source files should be lower than 55", () => {
-			const rule = TSArch.defineThat()
-				.files()
-				.withoutNameMatching(/.*spec\.ts/)
-				.should()
-				.haveComplexityLowerThan(55)
-				.build()
-
-			expect(project).toPass(rule)
-		})
-	})
-
 	describe("cycles", () => {
 		it("the project without test sample files should be cycle free", () => {
 			const rule = TSArch.defineThat()
