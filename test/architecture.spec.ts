@@ -52,7 +52,6 @@ describe("Project Architecture Rules", () => {
 			subjectPath       | objectPath
 			${/core/}         | ${/jest/}
 			${/core\/checks/} | ${/core\/builder/}
-			${/core\/checks/} | ${/core\/filter/}
 			${/core\/checks/} | ${/core\/lang/}
 			${/core\/checks/} | ${/core\/parser/}
 			${/core\/filter/} | ${/core\/builder/}

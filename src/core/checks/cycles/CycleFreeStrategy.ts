@@ -6,6 +6,7 @@ import { File } from "../../noun/File"
 import { Edge } from "./Model"
 import { TrajanSCC } from "./TrajanSCC"
 import { JohnsonsAPSP } from "./JohnsonsAPSP"
+import { Filter } from "../../filter/Filter"
 
 export interface DependencyGraph {
 	edges: Edge[]
@@ -18,7 +19,8 @@ export interface SimpleCycles {
 }
 
 export class CycleFreeStrategy implements CheckStrategy {
-	execute(isNegated: boolean, subjects: Noun[]): Result {
+	execute(isNegated: boolean, nouns: Noun[], subjectFilter: Filter): Result {
+		const subjects = subjectFilter.filter(nouns)
 		const result = new Result()
 		const cycles = this.getSimpleCycles(this.getDependencyGraph(File.getFrom(subjects)))
 

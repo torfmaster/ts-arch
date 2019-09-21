@@ -1,6 +1,6 @@
 import { DependOnStrategy } from "./DependOnStrategy"
 import { FileFactory } from "../../noun/FileFactory"
-import { TSArch } from "../../TSArch";
+import { TSArch } from "../../TSArch"
 
 describe("dependency rule", () => {
 	const noDependenciesFile = FileFactory.buildFromPath(__dirname + "/samples/NoDependencies.ts")
@@ -11,6 +11,12 @@ describe("dependency rule", () => {
 	const haveComplexityLowerThanStrategyFile = FileFactory.buildFromPath(
 		__dirname + "/../complexity/HaveComplexityLowerThanStrategy.ts"
 	)
+	const allFiles = [
+		noDependenciesFile,
+		dependOnStrategyFile,
+		twoDependenciesFile,
+		haveComplexityLowerThanStrategyFile
+	]
 
 	it("NoDependencies.ts should have no dependencies", async () => {
 		expect(
@@ -34,8 +40,9 @@ describe("dependency rule", () => {
 		const rule = new DependOnStrategy(TSArch.config.ignore)
 		const result = rule.execute(
 			false,
-			[twoDependenciesFile],
-			[dependOnStrategyFile, haveComplexityLowerThanStrategyFile]
+			allFiles,
+			{ filter: () => [twoDependenciesFile] },
+			{ filter: () => [dependOnStrategyFile, haveComplexityLowerThanStrategyFile] }
 		)
 		expect(result.hasRulePassed()).toBe(true)
 		expect(result.getEntries().length).toBe(2)
@@ -45,8 +52,9 @@ describe("dependency rule", () => {
 		const rule = new DependOnStrategy(TSArch.config.ignore)
 		const result = rule.execute(
 			true,
-			[twoDependenciesFile],
-			[dependOnStrategyFile, haveComplexityLowerThanStrategyFile]
+			allFiles,
+			{ filter: () => [twoDependenciesFile] },
+			{ filter: () => [dependOnStrategyFile, haveComplexityLowerThanStrategyFile] }
 		)
 		expect(result.hasRulePassed()).toBe(false)
 		expect(result.getEntries().length).toBe(2)
@@ -54,14 +62,24 @@ describe("dependency rule", () => {
 
 	it("TwoDependenciesInProject.ts has dependencies which are not part of the object", async () => {
 		const rule = new DependOnStrategy(TSArch.config.ignore)
-		const result = rule.execute(false, [twoDependenciesFile], [])
+		const result = rule.execute(
+			false,
+			allFiles,
+			{ filter: () => [twoDependenciesFile] },
+			{ filter: () => [] }
+		)
 		expect(result.hasRulePassed()).toBe(false)
 		expect(result.getEntries().length).toBe(1)
 	})
 
 	it("TwoDependenciesInProject.ts has dependencies which are not part of the object, negated", async () => {
 		const rule = new DependOnStrategy(TSArch.config.ignore)
-		const result = rule.execute(true, [twoDependenciesFile], [])
+		const result = rule.execute(
+			true,
+			allFiles,
+			{ filter: () => [twoDependenciesFile] },
+			{ filter: () => [] }
+		)
 		expect(result.hasRulePassed()).toBe(true)
 		expect(result.getEntries().length).toBe(1)
 	})

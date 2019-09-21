@@ -3,11 +3,13 @@ import { Noun } from "../../noun/Noun"
 import { Result, ResultEntry } from "../../Result"
 import { SyntaxKind, Node } from "typescript"
 import { File } from "../../noun/File"
+import { Filter } from "../../filter/Filter"
 
 export class HaveComplexityLowerThanStrategy implements CheckStrategy {
 	constructor(private value: number) {}
 
-	execute(isNegated: boolean, subjects: Noun[]): Result {
+	execute(isNegated: boolean, nouns: Noun[], subjectFilter: Filter): Result {
+		const subjects = subjectFilter.filter(nouns)
 		const result = new Result()
 		File.getFrom(subjects).forEach(s => {
 			const mcc = this.getMcc(s)

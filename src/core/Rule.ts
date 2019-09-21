@@ -15,8 +15,9 @@ export class Rule implements Checkable {
 	check(nouns: Noun[]): Result {
 		return this.checkStrategy.execute(
 			this.isNegated,
-			this.subjectFilter.filter(nouns),
-			this.objectFilter.filter(nouns)
+			nouns,
+			this.subjectFilter,
+			this.objectFilter
 		)
 	}
 }

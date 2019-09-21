@@ -1,5 +1,6 @@
 import { CycleFreeStrategy } from "./CycleFreeStrategy"
 import { FileFactory } from "../../noun/FileFactory"
+import { Noun } from "../../noun/Noun"
 
 describe("cycle rule", () => {
 	const a = FileFactory.buildFromPath(__dirname + "/samples/A.ts")
@@ -7,9 +8,14 @@ describe("cycle rule", () => {
 	const c = FileFactory.buildFromPath(__dirname + "/samples/C.ts")
 	const d = FileFactory.buildFromPath(__dirname + "/samples/D.ts")
 
+	const identity = {
+		filter: (x: Noun[]) => x
+	}
+
+
 	it("negated: A, C and B should not be cycle free", async () => {
 		const s = new CycleFreeStrategy()
-		const result = s.execute(true, [a, b, c])
+		const result = s.execute(true, [a, b, c], identity)
 		expect(result.hasRulePassed()).toBe(true)
 		expect(
 			result
@@ -23,7 +29,7 @@ describe("cycle rule", () => {
 
 	it("A, C and B should not be cycle free", async () => {
 		const s = new CycleFreeStrategy()
-		const result = s.execute(false, [a, b, c])
+		const result = s.execute(false, [a, b, c], identity)
 		expect(result.hasRulePassed()).toBe(false)
 		expect(
 			result

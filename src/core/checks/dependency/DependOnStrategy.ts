@@ -6,10 +6,13 @@ import { Result, ResultEntry } from "../../Result"
 import * as path from "path"
 import { IgnoreConfig } from "../../TSArchConfig";
 import { PathHelper } from "./PathHelper"
+import { Filter } from "../../filter/Filter"
 export class DependOnStrategy implements CheckStrategy {
 	constructor(private ignore: IgnoreConfig) {}
 
-	execute(isNegated: boolean, subjects: Noun[], objects: Noun[]): Result {
+	execute(isNegated: boolean, nouns: Noun[], subjectFilter: Filter, objectFilter: Filter): Result {
+		const subjects = subjectFilter.filter(nouns);
+		const objects = objectFilter.filter(nouns);
 		const result = new Result()
 		const fileObjects = File.getFrom(objects)
 		const fileSubjects = File.getFrom(subjects)
