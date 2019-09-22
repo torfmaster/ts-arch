@@ -43,7 +43,7 @@ describe("cycle rule", () => {
 
 	it("A, C and B have 2 cycles", async () => {
 		const s = new CycleFreeStrategy()
-		const g = s.getDependencyGraph([a, b, c])
+		const g = CycleFreeStrategy.getDependencyGraph([a, b, c])
 		expect(s.getSimpleCycles(g).cycles).toEqual([
 			[{ from: 0, to: 1 }, { from: 1, to: 0 }],
 			[{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 0 }]
@@ -52,7 +52,7 @@ describe("cycle rule", () => {
 
 	it("A, C, D and B have 2 cycles", async () => {
 		const s = new CycleFreeStrategy()
-		const g = s.getDependencyGraph([a, b, c, d])
+		const g = CycleFreeStrategy.getDependencyGraph([a, b, c, d])
 		expect(s.getSimpleCycles(g).cycles).toEqual([
 			[{ from: 0, to: 1 }, { from: 1, to: 0 }],
 			[{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 0 }]
@@ -61,18 +61,16 @@ describe("cycle rule", () => {
 
 	it("A and B should have one simple cycle", async () => {
 		const s = new CycleFreeStrategy()
-		const g = s.getDependencyGraph([a, b])
+		const g = CycleFreeStrategy.getDependencyGraph([a, b])
 		expect(s.getSimpleCycles(g).cycles).toEqual([[{ from: 0, to: 1 }, { from: 1, to: 0 }]])
 	})
 
 	it("A and B have only two edges", async () => {
-		const s = new CycleFreeStrategy()
-		expect(s.getDependencyGraph([a, b]).edges).toEqual([{ from: 0, to: 1 }, { from: 1, to: 0 }])
+		expect(CycleFreeStrategy.getDependencyGraph([a, b]).edges).toEqual([{ from: 0, to: 1 }, { from: 1, to: 0 }])
 	})
 
 	it("A, C, D and B have 4 edges", async () => {
-		const s = new CycleFreeStrategy()
-		expect(s.getDependencyGraph([a, b, c, d]).edges).toEqual([
+		expect(CycleFreeStrategy.getDependencyGraph([a, b, c, d]).edges).toEqual([
 			{ from: 0, to: 1 },
 			{ from: 1, to: 0 },
 			{ from: 1, to: 2 },

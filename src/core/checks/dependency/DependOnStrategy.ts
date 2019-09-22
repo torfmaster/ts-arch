@@ -4,33 +4,54 @@ import { Noun } from "../../noun/Noun"
 import { File } from "../../noun/File"
 import { Result, ResultEntry } from "../../Result"
 import * as path from "path"
-import { IgnoreConfig } from "../../TSArchConfig";
+import { IgnoreConfig } from "../../TSArchConfig"
 import { PathHelper } from "./PathHelper"
 import { Filter } from "../../filter/Filter"
+import { CycleFreeStrategy } from "../cycles/CycleFreeStrategy"
 export class DependOnStrategy implements CheckStrategy {
 	constructor(private ignore: IgnoreConfig) {}
 
-	execute(isNegated: boolean, nouns: Noun[], subjectFilter: Filter, objectFilter: Filter): Result {
-		const subjects = subjectFilter.filter(nouns);
-		const objects = objectFilter.filter(nouns);
+	execute(
+		isNegated: boolean,
+		nouns: Noun[],
+		subjectFilter: Filter,
+		objectFilter: Filter
+	): Result {
 		const result = new Result()
-		const fileObjects = File.getFrom(objects)
-		const fileSubjects = File.getFrom(subjects)
 
-		fileSubjects.forEach(s => {
-			const dependencies = DependOnStrategy.getDependenciesOfSubject(
-				s,
-				fileObjects,
-				this.ignore.js
-			)
-			if (dependencies.length > 0) {
-				dependencies.forEach(d => {
-					result.addEntry(this.buildHasDependenciesResult(s, d, isNegated))
-				})
-			} else {
-				result.addEntry(this.buildHasNoDependenciesResult(s, isNegated))
+		const graph = CycleFreeStrategy.getDependencyGraph(File.getFrom(nouns))
+		const subjects = subjectFilter.filter(nouns)
+		const objects = objectFilter.filter(nouns)
+		const validSubjectSet = new Set<number>()
+		for (const [key, value] of graph.fileData.entries()) {
+			if (subjects.some(subject => subject.getName() === value.getName())) {
+				validSubjectSet.add(key)
 			}
+		}
+
+		const invalidEdges = graph.edges.filter(({ from, to }) => {
+			const fromFile = graph.fileData.get(from)
+			const toFile = graph.fileData.get(to)
+			const subjectContained = subjects.some(
+				subject => !!fromFile && subject.getName() === fromFile.getName()
+			)
+			const objectContained = objects.some(
+				object => !!toFile && object.getName() === toFile.getName()
+			)
+			return subjectContained && objectContained
 		})
+
+		for (const invalidEdge of invalidEdges) {
+			const from = graph.fileData.get(invalidEdge.from)
+			const to = graph.fileData.get(invalidEdge.to)
+			result.addEntry(this.buildHasDependenciesResult(from!, to!, isNegated))
+			validSubjectSet.delete(invalidEdge.from)
+		}
+		console.log(validSubjectSet)
+		for (const validSubject of validSubjectSet) {
+			const subject = graph.fileData.get(validSubject)
+			result.addEntry(this.buildHasNoDependenciesResult(subject!, isNegated))
+		}
 		return result
 	}
 
@@ -85,7 +106,10 @@ export class DependOnStrategy implements CheckStrategy {
 	): ImportDeclaration | null {
 		let result: ImportDeclaration | null = null
 		this.getImportDeclarations(subject).forEach(i => {
-			const assumedPath = PathHelper.assumePathOfImportedObject(subject.getSourceFile().fileName, i)
+			const assumedPath = PathHelper.assumePathOfImportedObject(
+				subject.getSourceFile().fileName,
+				i
+			)
 			if (!assumedPath) {
 				return
 			}

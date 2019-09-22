@@ -21,8 +21,8 @@ export interface SimpleCycles {
 export class CycleFreeStrategy implements CheckStrategy {
 	execute(isNegated: boolean, nouns: Noun[], subjectFilter: Filter): Result {
 		const result = new Result()
-		let dependencyGraph = this.getDependencyGraph(File.getFrom(nouns))
-		const filteredGraph = this.filterGraph(dependencyGraph, subjectFilter)
+		let dependencyGraph = CycleFreeStrategy.getDependencyGraph(File.getFrom(nouns))
+		const filteredGraph = CycleFreeStrategy.filterGraph(dependencyGraph, subjectFilter)
 		const cycles = this.getSimpleCycles(filteredGraph)
 
 		if (cycles.cycles.length > 0) {
@@ -62,7 +62,7 @@ export class CycleFreeStrategy implements CheckStrategy {
 		}
 	}
 
-	private filterGraph(graph: DependencyGraph, filter: Filter): DependencyGraph {
+	public static filterGraph(graph: DependencyGraph, filter: Filter): DependencyGraph {
 		const admissibleIndices = new Set<number>();
 		const entries = graph.fileData.entries()
 		const fileData = new Map()
@@ -85,7 +85,7 @@ export class CycleFreeStrategy implements CheckStrategy {
 		}
 	}
 
-	public getDependencyGraph(subjects: File[]): DependencyGraph {
+	public static getDependencyGraph(subjects: File[]): DependencyGraph {
 		const ids: Map<File, number> = new Map()
 		const reversedMap: Map<number, File> = new Map()
 		const edges: Edge[] = []

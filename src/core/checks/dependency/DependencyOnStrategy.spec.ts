@@ -57,6 +57,7 @@ describe("dependency rule", () => {
 			{ filter: () => [dependOnStrategyFile, haveComplexityLowerThanStrategyFile] }
 		)
 		expect(result.hasRulePassed()).toBe(false)
+		console.log(result.getEntries())
 		expect(result.getEntries().length).toBe(2)
 	})
 
