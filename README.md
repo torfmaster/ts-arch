@@ -102,7 +102,7 @@ The following example illustrates this:
 
 ```typescript
 import "tsarch/dist/jest"
-import {slicesOfProject} from "tsarch" 
+import {slicesOfNxProject} from "tsarch" 
 import * as path from "path"
 
 describe("architecture", ()=> {
