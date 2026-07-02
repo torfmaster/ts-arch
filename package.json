@@ -21,7 +21,7 @@
 		"lint": "tslint -t codeFrame --project tsconfig.json 'src/**/*.ts' 'test/**/*.ts'",
 		"clean": "rimraf dist",
 		"prebuild": "rimraf dist",
-		"build": "tsc && typedoc --out docs --target es6 --theme minimal --mode file src",
+		"build": "tsc && typedoc --out docs",
 		"format": "prettier --ignore-path .gitignore --write '**/*.ts*'",
 		"format:check": "prettier --ignore-path .gitignore --check '**/*.ts*'",
 		"test": "jest --no-cache",
@@ -100,7 +100,7 @@
 		"tslint": "^5.11.0",
 		"tslint-config-prettier": "^1.14.0",
 		"tslint-config-standard": "^7.1.0",
-		"typedoc": "^0.17.8",
+		"typedoc": "^0.28.19",
 		"validate-commit-msg": "^2.12.2"
 	},
 	"dependencies": {
